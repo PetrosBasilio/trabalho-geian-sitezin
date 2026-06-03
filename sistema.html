@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chamada Escolar - TURMA 2D 2026</title>
+<link rel="stylesheet" href="style.css">
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f5f5f5;
+    padding:20px;
+}
+
+.container{
+    width:100%;
+    max-width:1700px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,0,0,0.1);
+}
+
+.topo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+h1{
+    color:white;
+    padding:10px 18px;
+    border-radius:10px;
+    color:#333;
+}
+
+.data{
+    background:#1e88e5;
+    color:white;
+    padding:10px 18px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+#pesquisa{
+    width:100%;
+    padding:12px;
+    margin-bottom:20px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:16px;
+}
+
+.tabela-container{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1400px;
+}
+
+th, td{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
+}
+
+th{
+    background:#1e88e5;
+    color:white;
+}
+
+.nome{
+    text-align:left;
+    font-weight:bold;
+}
+
+tr:hover{
+    background:#f5f5f5;
+}
+
+.status{
+    border:none;
+    padding:8px 10px;
+    border-radius:8px;
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+    min-width:45px;
+    transition:0.2s;
+}
+
+.presente{
+    background:#43a047;
+}
+
+.falta{
+    background:#e53935;
+}
+
+.justificada{
+    background:#fbc02d;
+    color:black;
+}
+
+.resumo{
+    margin-top:25px;
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.card{
+    flex:1;
+    min-width:220px;
+    padding:20px;
+    border-radius:12px;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.verde{
+    background:#43a047;
+}
+
+.vermelho{
+    background:#e53935;
+}
+
+.amarelo{
+    background:#fbc02d;
+    color:black;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="topo">
+
+    <h1 id="titulo">📚 Chamada Escolar - TURMA 2D</h1>
+
+    <div style="display:flex; gap:10px; align-items:center;">
+        <button id="toggleTheme" class="btn-tema">
+            🌙 Modo Escuro
+        </button>
+
+        <div class="data" id="dataAtual"></div>
+    </div>
+
+</div>
+
+    <input type="text" id="pesquisa" placeholder="Pesquisar aluno...">
+
+    <div class="tabela-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Nº</th>
+                    <th>Nome</th>
+
+                    <th>1ª</th>
+                    <th>2ª</th>
+                    <th>3ª</th>
+                    <th>4ª</th>
+                    <th>5ª</th>
+                    <th>6ª</th>
+                    <th>7ª</th>
+                    <th>8ª</th>
+                    <th>9ª</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="tabela">
+
+                <tr>
+                    <td>1</td>
+                    <td class="nome">Agenor Farias</td>
+
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                </tr>
+
+                <tr>
+                    <td>2</td>
+                    <td class="nome">Ana Gabriely</td>
+
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                </tr>
+
+                <tr>
+                    <td>3</td>
+                    <td class="nome">Ana Jenifer</td>
+
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                </tr>
+
+                <tr>
+                    <td>4</td>
+                    <td class="nome">Ana Kaylane</td>
+
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                    <td><button class="status presente">P</button></td>
+                </tr>
+
+                <tr>
+    <td>5</td>
+    <td class="nome">Ana Sophia</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>6</td>
+    <td class="nome">Ananda Kelly</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>7</td>
+    <td class="nome">Arthur Hector</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>8</td>
+    <td class="nome">Clara Dafne</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>9</td>
+    <td class="nome">Danilo Alfredo</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>10</td>
+    <td class="nome">Ester</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>11</td>
+    <td class="nome">Francisco Kauã</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>12</td>
+    <td class="nome">Gabriely Silva</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>13</td>
+    <td class="nome">Guilherme Ryan</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>14</td>
+    <td class="nome">Israel Souza</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>15</td>
+    <td class="nome">Itamara Suzyane</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+<tr>
+    <td>16</td>
+    <td class="nome">João Victor Galvão</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>17</td>
+    <td class="nome">João Victor Moreira</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>18</td>
+    <td class="nome">João Victor Silva</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>19</td>
+    <td class="nome">José Anthonny</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>20</td>
+    <td class="nome">Lara Victoria</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>21</td>
+    <td class="nome">Lucas Thiago</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>22</td>
+    <td class="nome">Luis Octavio</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>23</td>
+    <td class="nome">Marco Van Basten</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>24</td>
+    <td class="nome">Marcos Vinnicius</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>25</td>
+    <td class="nome">Maria Amanda</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>26</td>
+    <td class="nome">Maria Yasmin</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>27</td>
+    <td class="nome">Michelle Cynthia</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>28</td>
+    <td class="nome">Miguel Paiva</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>29</td>
+    <td class="nome">Nicolas Felix</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+
+<tr>
+    <td>30</td>
+    <td class="nome">Paulo Victor</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+<tr>
+    <td>31</td>
+    <td class="nome">Pedro Lucas</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+<tr>
+    <td>32</td>
+    <td class="nome">Pedro Ruan</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+<tr>
+    <td>33</td>
+    <td class="nome">Petros Basilio</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+<tr>
+    <td>34</td>
+    <td class="nome">Regis Ravi</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+<tr>
+    <td>35</td>
+    <td class="nome">Ravid Rocha</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+<tr>
+    <td>36</td>
+    <td class="nome">Roney</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+<tr>
+    <td>37</td>
+    <td class="nome">Saul Slater</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+<tr>
+    <td>38</td>
+    <td class="nome">Soffia Isabelly</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+<tr>
+    <td>39</td>
+    <td class="nome">Yasmin Gabriel</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+<tr>
+    <td>40</td>
+    <td class="nome">Ygor Willians</td>
+
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+    <td><button class="status presente">P</button></td>
+</tr>
+            </tbody>
+
+        </table>
+<button class="btnSalvar" onclick="salvarChamada()">
+    💾 Salvar Chamada
+</button>
+    </div>
+
+    <div class="resumo">
+
+        <div class="card verde">
+            ✅ Presenças: <span id="presentes">0</span>
+        </div>
+
+        <div class="card vermelho">
+            ❌ Faltas: <span id="faltas">0</span>
+        </div>
+
+        <div class="card amarelo">
+            📄 Justificadas: <span id="justificadas">0</span>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+
+    const btn = document.getElementById("toggleTheme");
+
+    btn.addEventListener("click", () => {
+
+        document.body.classList.toggle("dark");
+
+        if (document.body.classList.contains("dark")) {
+            btn.innerText = "☀️ Modo Claro";
+        } else {
+            btn.innerText = "🌙 Modo Escuro";
+        }
+
+    });
+
+});
+// DATA AUTOMÁTICA
+
+
+
+const hoje = new Date();
+
+const dia = String(hoje.getDate()).padStart(2, '0');
+const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+const ano = hoje.getFullYear();
+
+document.getElementById("dataAtual")
+.innerHTML = `📅 ${dia}/${mes}/${ano}`;
+
+
+// MUDAR STATUS
+
+const botoes = document.querySelectorAll(".status");
+
+botoes.forEach(botao => {
+
+    botao.addEventListener("click", () => {
+
+        if(botao.classList.contains("presente")){
+
+            botao.classList.remove("presente");
+            botao.classList.add("falta");
+
+            botao.innerText = "F";
+
+        }else if(botao.classList.contains("falta")){
+
+            botao.classList.remove("falta");
+            botao.classList.add("justificada");
+
+            botao.innerText = "J";
+
+        }else{
+
+            botao.classList.remove("justificada");
+            botao.classList.add("presente");
+
+            botao.innerText = "P";
+
+        }
+
+        atualizarResumo();
+
+    });
+
+});
+
+
+// PESQUISA
+
+const pesquisa = document.getElementById("pesquisa");
+
+pesquisa.addEventListener("keyup", () => {
+
+    const valor = pesquisa.value.toLowerCase();
+
+    const linhas = document.querySelectorAll("#tabela tr");
+
+    linhas.forEach(linha => {
+
+        const nome = linha.querySelector(".nome")
+        .innerText
+        .toLowerCase();
+
+        if(nome.includes(valor)){
+            linha.style.display = "";
+        }else{
+            linha.style.display = "none";
+        }
+
+    });
+
+});
+
+
+// CONTAGEM
+
+function atualizarResumo(){
+
+    const presentes = document.querySelectorAll(".presente").length;
+    const faltas = document.querySelectorAll(".falta").length;
+    const justificadas = document.querySelectorAll(".justificada").length;
+
+    document.getElementById("presentes").innerText = presentes;
+    document.getElementById("faltas").innerText = faltas;
+    document.getElementById("justificadas").innerText = justificadas;
+
+}
+
+atualizarResumo();
+
+
+// SALVAR CHAMADA
+
+function salvarChamada(){
+
+    const linhas = document.querySelectorAll("#tabela tr");
+
+    const chamadaCompleta = [];
+
+    linhas.forEach(linha => {
+
+        const nome = linha.querySelector(".nome").innerText;
+
+        const botoes = linha.querySelectorAll(".status");
+
+        const aluno = {
+
+            nome: nome,
+            aulas: []
+
+        };
+
+        botoes.forEach(botao => {
+
+            aluno.aulas.push(botao.innerText);
+
+        });
+
+        chamadaCompleta.push(aluno);
+
+    });
+
+    fetch("salvar.php", {
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body: JSON.stringify(chamadaCompleta)
+
+    })
+
+    .then(res => res.text())
+
+    .then(data => {
+
+        alert(data);
+        console.log(data);
+
+    })
+
+    .catch(erro => {
+
+        alert("Erro ao salvar");
+        console.log(erro);
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
