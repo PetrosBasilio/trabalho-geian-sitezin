@@ -1,0 +1,101 @@
+-- =============================================
+-- SISTEMA DE CHAMADA ESCOLAR — BANCO DE DADOS
+-- Execute este arquivo no phpMyAdmin ou MySQL
+-- =============================================
+
+CREATE DATABASE IF NOT EXISTS Escola
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE Escola;
+
+-- =============================================
+-- TABELA: turmas
+-- =============================================
+CREATE TABLE IF NOT EXISTS turmas (
+  id   INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(10) NOT NULL UNIQUE  -- ex: '2D', '1A'
+);
+
+INSERT IGNORE INTO turmas (nome) VALUES
+  ('1A'),('1B'),('1C'),('1D'),
+  ('2A'),('2B'),('2C'),('2D'),
+  ('3A'),('3B'),('3C'),('3D');
+
+-- =============================================
+-- TABELA: alunos
+-- =============================================
+CREATE TABLE IF NOT EXISTS alunos (
+  id        INT AUTO_INCREMENT PRIMARY KEY,
+  nome      VARCHAR(100) NOT NULL,
+  turma_id  INT NOT NULL,
+  ativo     TINYINT(1) DEFAULT 1,
+  FOREIGN KEY (turma_id) REFERENCES turmas(id)
+);
+
+-- Alunos padrão da turma 2D
+INSERT IGNORE INTO alunos (nome, turma_id) VALUES
+  ('Agenor Farias',      (SELECT id FROM turmas WHERE nome='2D')),
+  ('Ana Gabriely',       (SELECT id FROM turmas WHERE nome='2D')),
+  ('Ana Jenifer',        (SELECT id FROM turmas WHERE nome='2D')),
+  ('Ana Kaylane',        (SELECT id FROM turmas WHERE nome='2D')),
+  ('Ana Sophia',         (SELECT id FROM turmas WHERE nome='2D')),
+  ('Ananda Kelly',       (SELECT id FROM turmas WHERE nome='2D')),
+  ('Arthur Hector',      (SELECT id FROM turmas WHERE nome='2D')),
+  ('Clara Dafne',        (SELECT id FROM turmas WHERE nome='2D')),
+  ('Danilo Alfredo',     (SELECT id FROM turmas WHERE nome='2D')),
+  ('Ester',              (SELECT id FROM turmas WHERE nome='2D')),
+  ('Francisco Kauã',     (SELECT id FROM turmas WHERE nome='2D')),
+  ('Gabriely Silva',     (SELECT id FROM turmas WHERE nome='2D')),
+  ('Guilherme Ryan',     (SELECT id FROM turmas WHERE nome='2D')),
+  ('Israel Souza',       (SELECT id FROM turmas WHERE nome='2D')),
+  ('Itamara Suzyane',    (SELECT id FROM turmas WHERE nome='2D')),
+  ('João Victor Galvão', (SELECT id FROM turmas WHERE nome='2D')),
+  ('João Victor Moreira',(SELECT id FROM turmas WHERE nome='2D')),
+  ('João Victor Silva',  (SELECT id FROM turmas WHERE nome='2D')),
+  ('José Anthonny',      (SELECT id FROM turmas WHERE nome='2D')),
+  ('Lara Victoria',      (SELECT id FROM turmas WHERE nome='2D')),
+  ('Lucas Thiago',       (SELECT id FROM turmas WHERE nome='2D')),
+  ('Luis Octavio',       (SELECT id FROM turmas WHERE nome='2D')),
+  ('Marco Van Basten',   (SELECT id FROM turmas WHERE nome='2D')),
+  ('Marcos Vinnicius',   (SELECT id FROM turmas WHERE nome='2D')),
+  ('Maria Amanda',       (SELECT id FROM turmas WHERE nome='2D')),
+  ('Maria Yasmin',       (SELECT id FROM turmas WHERE nome='2D')),
+  ('Michelle Cynthia',   (SELECT id FROM turmas WHERE nome='2D')),
+  ('Miguel Paiva',       (SELECT id FROM turmas WHERE nome='2D')),
+  ('Nicolas Felix',      (SELECT id FROM turmas WHERE nome='2D')),
+  ('Paulo Victor',       (SELECT id FROM turmas WHERE nome='2D')),
+  ('Pedro Lucas',        (SELECT id FROM turmas WHERE nome='2D')),
+  ('Pedro Ruan',         (SELECT id FROM turmas WHERE nome='2D')),
+  ('Petros Basilio',     (SELECT id FROM turmas WHERE nome='2D')),
+  ('Regis Ravi',         (SELECT id FROM turmas WHERE nome='2D')),
+  ('Ravid Rocha',        (SELECT id FROM turmas WHERE nome='2D')),
+  ('Roney',              (SELECT id FROM turmas WHERE nome='2D')),
+  ('Saul Slater',        (SELECT id FROM turmas WHERE nome='2D')),
+  ('Soffia Isabelly',    (SELECT id FROM turmas WHERE nome='2D')),
+  ('Yasmin Gabriel',     (SELECT id FROM turmas WHERE nome='2D')),
+  ('Ygor Willians',      (SELECT id FROM turmas WHERE nome='2D'));
+
+-- =============================================
+-- TABELA: frequencia
+-- =============================================
+CREATE TABLE IF NOT EXISTS frequencia (
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  aluno_id      INT NOT NULL,
+  aula          INT NOT NULL,          -- 1 a 9
+  status        CHAR(1) NOT NULL,      -- P, F, J
+  data_chamada  DATE NOT NULL,
+  UNIQUE KEY unico_registro (aluno_id, aula, data_chamada),
+  FOREIGN KEY (aluno_id) REFERENCES alunos(id)
+);
+
+-- =============================================
+-- TABELA: usuarios (login)
+-- =============================================
+CREATE TABLE IF NOT EXISTS usuarios (
+  id    INT AUTO_INCREMENT PRIMARY KEY,
+  login VARCHAR(50) NOT NULL UNIQUE,
+  senha VARCHAR(255) NOT NULL   -- guardar hash bcrypt no futuro
+);
+
+INSERT IGNORE INTO usuarios (login, senha) VALUES ('admin', '1234');
