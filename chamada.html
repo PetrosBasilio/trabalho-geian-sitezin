@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chamada Escolar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:        #f0f2f5;
+  --surface:   #ffffff;
+  --border:    #e2e6ea;
+  --text:      #1a1d23;
+  --text-mute: #6b7280;
+  --blue:      #2563eb;
+  --blue-dark: #1d4ed8;
+  --green:     #16a34a;
+  --red:       #dc2626;
+  --yellow:    #d97706;
+  --orange:    #ea580c;
+  --purple:    #7c3aed;
+  --shadow:    0 4px 24px rgba(0,0,0,.08);
+  --radius:    14px;
+}
+body.dark {
+  --bg:#0d0f14; --surface:#161a22; --border:#2a2f3d;
+  --text:#e8ecf0; --text-mute:#8b95a1; --shadow:0 4px 24px rgba(0,0,0,.4);
+}
+body {
+  font-family:'Sora',sans-serif; background:var(--bg); color:var(--text);
+  padding:20px 16px; min-height:100vh; transition:background .3s,color .3s;
+}
+.container { max-width:1600px; margin:auto; background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px 28px; transition:background .3s; }
+
+/* TOPO */
+.topo { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px; }
+.titulo-bloco h1 { font-size:1.4rem; font-weight:700; letter-spacing:-.4px; }
+.titulo-bloco span { font-size:.82rem; color:var(--text-mute); font-family:'JetBrains Mono',monospace; }
+.topo-acoes { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.chip-data { background:var(--blue); color:white; padding:7px 14px; border-radius:999px; font-size:.82rem; font-weight:600; }
+
+/* ABAS */
+.abas { display:flex; gap:4px; margin-bottom:20px; background:var(--bg); border-radius:12px; padding:4px; border:1.5px solid var(--border); width:fit-content; }
+.aba { padding:8px 20px; border:none; border-radius:9px; background:transparent; color:var(--text-mute); font-family:'Sora',sans-serif; font-size:.85rem; font-weight:600; cursor:pointer; transition:all .2s; }
+.aba.ativa { background:var(--surface); color:var(--blue); box-shadow:0 2px 8px rgba(0,0,0,.1); }
+.aba-content { display:none; }
+.aba-content.ativa { display:block; }
+
+/* TURMA BAR */
+.turma-bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:18px; padding:12px 16px; background:var(--bg); border-radius:var(--radius); border:1.5px solid var(--border); }
+.turma-bar label { font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--text-mute); white-space:nowrap; }
+.turma-grupos { display:flex; gap:5px; flex-wrap:wrap; flex:1; }
+.turma-grupo { display:flex; gap:3px; align-items:center; }
+.turma-grupo-label { font-size:.7rem; font-weight:700; color:var(--text-mute); padding:2px 5px; background:var(--border); border-radius:4px; font-family:'JetBrains Mono',monospace; }
+.btn-turma { padding:5px 11px; border:1.5px solid var(--border); border-radius:7px; background:var(--surface); color:var(--text); font-family:'JetBrains Mono',monospace; font-size:.78rem; font-weight:700; cursor:pointer; transition:all .15s; }
+.btn-turma:hover { border-color:var(--blue); color:var(--blue); }
+.btn-turma.ativa { background:var(--blue); color:white; border-color:var(--blue); box-shadow:0 2px 8px rgba(37,99,235,.3); }
+
+/* BOTÕES */
+.btn { display:inline-flex; align-items:center; gap:6px; padding:8px 15px; border:none; border-radius:999px; font-family:'Sora',sans-serif; font-size:.82rem; font-weight:600; cursor:pointer; transition:transform .15s,box-shadow .15s,background .2s; }
+.btn:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,.15); }
+.btn:active { transform:translateY(0); }
+.btn-tema   { background:var(--surface); color:var(--text); border:1.5px solid var(--border); }
+.btn-salvar { background:var(--blue); color:white; }
+.btn-salvar:hover { background:var(--blue-dark); }
+.btn-todos  { background:var(--green); color:white; }
+.btn-faltas { background:var(--red); color:white; }
+.btn-export { background:var(--purple); color:white; }
+.btn-alunos { background:var(--yellow); color:white; }
+.btn-sair   { background:var(--red); color:white; }
+.btn-impr   { background:var(--orange); color:white; }
+.btn-sm     { padding:6px 12px; font-size:.78rem; }
+
+/* RESUMO */
+.resumo { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-bottom:16px; }
+.card { padding:14px 16px; border-radius:var(--radius); display:flex; flex-direction:column; gap:3px; }
+.card .label { font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.6px; opacity:.85; }
+.card .valor { font-size:1.7rem; font-weight:700; font-family:'JetBrains Mono',monospace; }
+.card .bar-bg { height:4px; background:rgba(255,255,255,.3); border-radius:99px; margin-top:4px; overflow:hidden; }
+.card .bar-fill { height:100%; background:rgba(255,255,255,.8); border-radius:99px; transition:width .4s ease; }
+.card.verde    { background:var(--green); color:white; }
+.card.vermelho { background:var(--red);   color:white; }
+.card.amarelo  { background:var(--yellow);color:white; }
+.card.azul     { background:var(--blue);  color:white; }
+.card.laranja  { background:var(--orange);color:white; }
+
+/* TOOLBAR */
+.toolbar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+#pesquisa { flex:1; min-width:200px; padding:9px 16px; border-radius:999px; border:1.5px solid var(--border); background:var(--bg); color:var(--text); font-family:'Sora',sans-serif; font-size:.86rem; outline:none; transition:border .2s,background .3s; }
+#pesquisa:focus { border-color:var(--blue); }
+
+/* TABELA */
+.tabela-container { overflow-x:auto; border-radius:var(--radius); border:1.5px solid var(--border); }
+table { width:100%; border-collapse:collapse; min-width:860px; }
+thead tr { background:var(--blue); }
+th { color:white; padding:10px 8px; font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; white-space:nowrap; }
+th:first-child { padding-left:14px; }
+tbody tr { border-bottom:1px solid var(--border); transition:background .15s; }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover { background:var(--bg); }
+tbody tr.risco-falta { background:rgba(220,38,38,.06); }
+body.dark tbody tr.risco-falta { background:rgba(220,38,38,.12); }
+tbody tr.foco-teclado { outline:2px solid var(--blue); outline-offset:-2px; }
+td { padding:8px; text-align:center; font-size:.84rem; vertical-align:middle; }
+td.num { color:var(--text-mute); font-family:'JetBrains Mono',monospace; font-size:.76rem; padding-left:14px; }
+td.nome { text-align:left; font-weight:600; }
+.status { border:none; width:33px; height:33px; border-radius:8px; color:white; cursor:pointer; font-weight:700; font-size:.76rem; font-family:'JetBrains Mono',monospace; transition:transform .1s,box-shadow .1s,background .2s; }
+.status:hover  { transform:scale(1.12); box-shadow:0 2px 8px rgba(0,0,0,.2); }
+.status:active { transform:scale(.96); }
+.status.presente    { background:var(--green); }
+.status.falta       { background:var(--red); }
+.status.justificada { background:var(--yellow); color:#1a1d23; }
+.pct { font-family:'JetBrains Mono',monospace; font-size:.76rem; font-weight:700; padding:3px 7px; border-radius:6px; white-space:nowrap; }
+.pct.ok  { background:rgba(22,163,74,.12); color:var(--green); }
+.pct.med { background:rgba(217,119,6,.12); color:var(--yellow); }
+.pct.bad { background:rgba(220,38,38,.12); color:var(--red); }
+
+/* BADGE CONSECUTIVO */
+.badge-consec { display:inline-block; background:var(--orange); color:white; font-size:.65rem; font-weight:700; padding:2px 5px; border-radius:5px; margin-left:4px; font-family:'JetBrains Mono',monospace; vertical-align:middle; }
+
+/* FOOTER AÇÕES */
+.footer-acoes { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+
+/* ATALHOS HINT */
+.atalhos-hint { font-size:.75rem; color:var(--text-mute); margin-top:8px; }
+.atalhos-hint kbd { background:var(--border); border-radius:4px; padding:1px 5px; font-family:'JetBrains Mono',monospace; font-size:.72rem; }
+
+/* ===== ABA HISTÓRICO ===== */
+.hist-toolbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:18px; }
+.hist-toolbar select, .hist-toolbar input[type=date] {
+  padding:8px 12px; border:1.5px solid var(--border); border-radius:10px;
+  background:var(--bg); color:var(--text); font-family:'Sora',sans-serif; font-size:.85rem; outline:none;
+}
+.hist-toolbar select:focus, .hist-toolbar input[type=date]:focus { border-color:var(--blue); }
+
+/* CALENDÁRIO */
+.calendario { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:18px; }
+.cal-header { text-align:center; font-size:.72rem; font-weight:700; color:var(--text-mute); text-transform:uppercase; padding:4px 0; }
+.cal-dia { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:.8rem; font-weight:600; cursor:default; font-family:'JetBrains Mono',monospace; border:1.5px solid transparent; transition:all .15s; }
+.cal-dia.vazio { opacity:0; cursor:default; }
+.cal-dia.tem-chamada { background:rgba(37,99,235,.12); color:var(--blue); border-color:rgba(37,99,235,.2); cursor:pointer; }
+.cal-dia.tem-chamada:hover { background:var(--blue); color:white; }
+.cal-dia.selecionado { background:var(--blue); color:white; box-shadow:0 2px 8px rgba(37,99,235,.4); }
+.cal-dia.hoje { border-color:var(--green); }
+.cal-nav { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.cal-nav button { background:var(--surface); border:1.5px solid var(--border); border-radius:8px; padding:6px 12px; cursor:pointer; color:var(--text); font-size:1rem; transition:.15s; }
+.cal-nav button:hover { border-color:var(--blue); color:var(--blue); }
+.cal-nav span { font-weight:700; font-size:1rem; flex:1; text-align:center; }
+
+/* TABELA HISTÓRICO */
+.hist-tabela-wrap { overflow-x:auto; border-radius:var(--radius); border:1.5px solid var(--border); margin-bottom:18px; }
+.hist-tabela-wrap table { min-width:600px; }
+
+/* RISCO */
+.risco-section { margin-bottom:20px; }
+.risco-section h3 { font-size:1rem; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.risco-lista { display:flex; flex-direction:column; gap:6px; }
+.risco-item { display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:10px; background:var(--bg); border:1.5px solid var(--border); }
+.risco-nome { flex:1; font-weight:600; font-size:.9rem; }
+.risco-bar-wrap { flex:2; height:8px; background:var(--border); border-radius:99px; overflow:hidden; }
+.risco-bar { height:100%; border-radius:99px; background:var(--red); transition:width .5s ease; }
+.risco-pct { font-family:'JetBrains Mono',monospace; font-weight:700; font-size:.85rem; color:var(--red); min-width:40px; text-align:right; }
+
+/* COMPARAR */
+.comparar-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.comparar-card { padding:16px; border-radius:var(--radius); border:1.5px solid var(--border); }
+.comparar-card h4 { font-size:.9rem; font-weight:700; margin-bottom:12px; color:var(--blue); }
+.comparar-mini { display:flex; gap:8px; margin-bottom:6px; }
+.comparar-mini .label { font-size:.78rem; color:var(--text-mute); flex:1; }
+.comparar-mini .val { font-family:'JetBrains Mono',monospace; font-size:.85rem; font-weight:700; }
+
+/* MODAL */
+.modal-overlay { position:fixed; inset:0; z-index:100; background:rgba(0,0,0,.6); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .25s; }
+.modal-overlay.aberto { opacity:1; pointer-events:all; }
+.modal { background:var(--surface); border-radius:20px; padding:26px; width:100%; max-width:480px; box-shadow:0 24px 64px rgba(0,0,0,.3); border:1.5px solid var(--border); transform:translateY(20px) scale(.97); transition:transform .25s cubic-bezier(.16,1,.3,1); }
+.modal-overlay.aberto .modal { transform:translateY(0) scale(1); }
+.modal h2 { font-size:1.1rem; font-weight:700; margin-bottom:4px; }
+.modal .sub { font-size:.8rem; color:var(--text-mute); margin-bottom:16px; }
+.modal-input-row { display:flex; gap:8px; margin-bottom:12px; }
+.modal-input-row input { flex:1; padding:9px 12px; border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-family:'Sora',sans-serif; font-size:.86rem; outline:none; transition:border .2s; }
+.modal-input-row input:focus { border-color:var(--blue); }
+.modal-input-row .btn { border-radius:10px; }
+.lista-alunos { max-height:280px; overflow-y:auto; border:1.5px solid var(--border); border-radius:10px; margin-bottom:12px; }
+.item-aluno { display:flex; justify-content:space-between; align-items:center; padding:9px 12px; border-bottom:1px solid var(--border); font-size:.86rem; transition:background .15s; }
+.item-aluno:last-child { border-bottom:none; }
+.item-aluno:hover { background:var(--bg); }
+.item-aluno .num-aluno { font-family:'JetBrains Mono',monospace; font-size:.73rem; color:var(--text-mute); margin-right:8px; }
+.btn-remover { background:none; border:none; cursor:pointer; color:var(--red); font-size:16px; padding:2px 4px; border-radius:5px; transition:background .15s; }
+.btn-remover:hover { background:rgba(220,38,38,.1); }
+.modal-footer { display:flex; justify-content:flex-end; gap:8px; }
+
+/* TOAST */
+#toast { position:fixed; bottom:22px; right:22px; background:#1a1d23; color:white; padding:10px 16px; border-radius:11px; font-size:.83rem; font-weight:600; box-shadow:0 8px 24px rgba(0,0,0,.3); opacity:0; transform:translateY(10px); transition:opacity .3s,transform .3s; pointer-events:none; z-index:999; }
+#toast.show { opacity:1; transform:translateY(0); }
+
+/* IMPRESSÃO */
+@media print {
+  body { background:white; padding:0; }
+  .container { box-shadow:none; border-radius:0; padding:16px; max-width:100%; }
+  .topo-acoes, .abas, .turma-bar, .toolbar, .footer-acoes, .resumo,
+  .atalhos-hint, #toast, .modal-overlay { display:none !important; }
+  .aba-content { display:block !important; }
+  #aba-chamada { display:block !important; }
+  #aba-historico, #aba-risco, #aba-comparar { display:none !important; }
+  .print-header { display:block !important; text-align:center; margin-bottom:16px; }
+  .print-header h2 { font-size:1.2rem; }
+  .print-header p  { font-size:.85rem; color:#666; }
+  .tabela-container { border:1px solid #ccc; border-radius:0; }
+  th { background:#1e88e5 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .status { width:28px; height:28px; font-size:.7rem; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .status.presente    { background:#16a34a !important; }
+  .status.falta       { background:#dc2626 !important; }
+  .status.justificada { background:#d97706 !important; color:#1a1d23 !important; }
+}
+.print-header { display:none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- TOPO -->
+  <div class="topo">
+    <div class="titulo-bloco">
+      <h1>📚 Chamada Escolar</h1>
+      <span id="subtitulo">TURMA 2D — 2026</span>
+    </div>
+    <div class="topo-acoes">
+      <button class="btn btn-tema" id="toggleTheme">🌙 Modo Escuro</button>
+      <div class="chip-data" id="dataAtual"></div>
+      <button class="btn btn-sair" onclick="sair()">🚪 Sair</button>
+    </div>
+  </div>
+
+  <!-- ABAS -->
+  <div class="abas">
+    <button class="aba ativa" onclick="trocarAba('chamada',this)">📋 Chamada</button>
+    <button class="aba" onclick="trocarAba('historico',this)">📅 Histórico</button>
+    <button class="aba" onclick="trocarAba('risco',this)">⚠️ Em Risco</button>
+    <button class="aba" onclick="trocarAba('comparar',this)">📊 Comparar</button>
+  </div>
+
+  <!-- SELETOR DE TURMA -->
+  <div class="turma-bar">
+    <label>Turma:</label>
+    <div class="turma-grupos" id="turmaGrupos"></div>
+  </div>
+
+  <!-- ======= ABA: CHAMADA ======= -->
+  <div class="aba-content ativa" id="aba-chamada">
+
+    <div class="resumo">
+      <div class="card verde">
+        <span class="label">✅ Presenças</span>
+        <span class="valor" id="presentes">0</span>
+        <div class="bar-bg"><div class="bar-fill" id="bar-p" style="width:0%"></div></div>
+      </div>
+      <div class="card vermelho">
+        <span class="label">❌ Faltas</span>
+        <span class="valor" id="faltas">0</span>
+        <div class="bar-bg"><div class="bar-fill" id="bar-f" style="width:0%"></div></div>
+      </div>
+      <div class="card amarelo">
+        <span class="label">📄 Justificadas</span>
+        <span class="valor" id="justificadas">0</span>
+        <div class="bar-bg"><div class="bar-fill" id="bar-j" style="width:0%"></div></div>
+      </div>
+      <div class="card azul">
+        <span class="label">👥 Alunos</span>
+        <span class="valor" id="total">0</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:100%"></div></div>
+      </div>
+      <div class="card laranja">
+        <span class="label">⚠️ Em Risco</span>
+        <span class="valor" id="em-risco">0</span>
+        <div class="bar-bg"><div class="bar-fill" id="bar-risco" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <input type="text" id="pesquisa" placeholder="🔍 Pesquisar aluno...">
+      <button class="btn btn-todos"  onclick="marcarTodosPresente()">✅ Todos Presentes</button>
+      <button class="btn btn-faltas" onclick="marcarTodosFalta()">❌ Todos Falta</button>
+      <button class="btn btn-alunos" onclick="abrirModalAlunos()">👥 Gerenciar Alunos</button>
+    </div>
+
+    <!-- PRINT HEADER (só aparece na impressão) -->
+    <div class="print-header">
+      <h2>📚 Chamada Escolar — <span id="print-turma"></span></h2>
+      <p id="print-data"></p>
+    </div>
+
+    <div class="tabela-container">
+      <table id="tabela-principal">
+        <thead>
+          <tr>
+            <th>Nº</th>
+            <th style="text-align:left">Nome</th>
+            <th>1ª</th><th>2ª</th><th>3ª</th><th>4ª</th><th>5ª</th>
+            <th>6ª</th><th>7ª</th><th>8ª</th><th>9ª</th>
+            <th>% Presença</th>
+          </tr>
+        </thead>
+        <tbody id="tabela"></tbody>
+      </table>
+    </div>
+
+    <div class="footer-acoes">
+      <button class="btn btn-salvar" onclick="salvarChamada()">💾 Salvar Chamada</button>
+      <button class="btn btn-export" onclick="exportarCSV()">📊 Exportar CSV</button>
+      <button class="btn btn-impr"   onclick="imprimirChamada()">🖨️ Imprimir</button>
+    </div>
+
+    <p class="atalhos-hint">
+      ⌨️ Atalhos de teclado (selecione uma linha com ↑↓):
+      <kbd>P</kbd> Presente &nbsp; <kbd>F</kbd> Falta &nbsp; <kbd>J</kbd> Justificada &nbsp; <kbd>Enter</kbd> Próximo aluno
+    </p>
+
+  </div>
+
+  <!-- ======= ABA: HISTÓRICO ======= -->
+  <div class="aba-content" id="aba-historico">
+
+    <div class="hist-toolbar">
+      <button class="btn btn-salvar btn-sm" onclick="carregarCalendario()">🔄 Atualizar</button>
+      <span style="font-size:.82rem;color:var(--text-mute)">Clique em um dia azul para ver a chamada daquele dia</span>
+    </div>
+
+    <div class="cal-nav">
+      <button onclick="mudarMesHist(-1)">◀</button>
+      <span id="cal-titulo"></span>
+      <button onclick="mudarMesHist(1)">▶</button>
+    </div>
+    <div class="calendario" id="calendario"></div>
+
+    <div class="hist-tabela-wrap" id="hist-resultado" style="display:none">
+      <table>
+        <thead>
+          <tr id="hist-thead"></tr>
+        </thead>
+        <tbody id="hist-tbody"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ======= ABA: EM RISCO ======= -->
+  <div class="aba-content" id="aba-risco">
+
+    <div class="hist-toolbar">
+      <label style="font-size:.82rem;font-weight:600;color:var(--text-mute)">Período:</label>
+      <input type="date" id="risco-inicio">
+      <span style="color:var(--text-mute)">até</span>
+      <input type="date" id="risco-fim">
+      <button class="btn btn-salvar btn-sm" onclick="carregarRisco()">🔍 Buscar</button>
+    </div>
+
+    <div class="risco-section">
+      <h3>⚠️ Alunos com mais de 25% de faltas <span id="risco-subtitulo" style="font-weight:400;color:var(--text-mute);font-size:.85rem"></span></h3>
+      <div class="risco-lista" id="risco-lista">
+        <p style="color:var(--text-mute);font-style:italic">Selecione um período e clique em Buscar.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ======= ABA: COMPARAR ======= -->
+  <div class="aba-content" id="aba-comparar">
+
+    <div class="hist-toolbar" style="flex-wrap:wrap;gap:12px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="font-size:.82rem;font-weight:600;color:var(--text-mute)">Aluno:</label>
+        <select id="comp-aluno" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;font-size:.85rem;outline:none"></select>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="font-size:.82rem;font-weight:600;color:var(--text-mute)">Mês 1:</label>
+        <input type="month" id="comp-mes1" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;font-size:.85rem;outline:none">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="font-size:.82rem;font-weight:600;color:var(--text-mute)">Mês 2:</label>
+        <input type="month" id="comp-mes2" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;font-size:.85rem;outline:none">
+      </div>
+      <button class="btn btn-salvar btn-sm" onclick="compararAluno()">📊 Comparar</button>
+    </div>
+
+    <div class="comparar-grid" id="comparar-resultado" style="display:none"></div>
+
+  </div>
+
+</div>
+
+<!-- MODAL GERENCIAR ALUNOS -->
+<div class="modal-overlay" id="modalOverlay" onclick="fecharModalFora(event)">
+  <div class="modal">
+    <h2>👥 Gerenciar Alunos</h2>
+    <p class="sub" id="modal-sub">Turma 2D</p>
+    <div class="modal-input-row">
+      <input type="text" id="inputNovoAluno" placeholder="Nome completo..." onkeydown="if(event.key==='Enter') adicionarAluno()">
+      <button class="btn btn-salvar" onclick="adicionarAluno()">+ Adicionar</button>
+    </div>
+    <div class="lista-alunos" id="listaModalAlunos"></div>
+    <div class="modal-footer">
+      <button class="btn btn-tema" onclick="fecharModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ===== VERIFICAR LOGIN =====
+(function(){
+  const ok = localStorage.getItem("chamada_sessao")==="logado"
+           || sessionStorage.getItem("chamada_sessao")==="logado";
+  if(!ok) window.location.href="index.html";
+})();
+
+const NUM_AULAS    = 9;
+const LIMITE_FALTA = 0.25;
+const SERIES       = ["1","2","3"];
+const LETRAS       = ["A","B","C","D"];
+const ALUNOS_PADRAO_2D = [
+  "Agenor Farias","Ana Gabriely","Ana Jenifer","Ana Kaylane","Ana Sophia",
+  "Ananda Kelly","Arthur Hector","Clara Dafne","Danilo Alfredo","Ester",
+  "Francisco Kauã","Gabriely Silva","Guilherme Ryan","Israel Souza","Itamara Suzyane",
+  "João Victor Galvão","João Victor Moreira","João Victor Silva","José Anthonny","Lara Victoria",
+  "Lucas Thiago","Luis Octavio","Marco Van Basten","Marcos Vinnicius","Maria Amanda",
+  "Maria Yasmin","Michelle Cynthia","Miguel Paiva","Nicolas Felix","Paulo Victor",
+  "Pedro Lucas","Pedro Ruan","Petros Basilio","Regis Ravi","Ravid Rocha",
+  "Roney","Saul Slater","Soffia Isabelly","Yasmin Gabriel","Ygor Willians"
+];
+
+let turmaSelecionada = localStorage.getItem("ultima_turma") || "2D";
+let linhaFoco = -1;
+let calAno, calMes;
+
+const hoje = new Date();
+calAno = hoje.getFullYear();
+calMes = hoje.getMonth();
+
+// ===== ABAS =====
+function trocarAba(id, btn) {
+  document.querySelectorAll(".aba-content").forEach(el => el.classList.remove("ativa"));
+  document.querySelectorAll(".aba").forEach(el => el.classList.remove("ativa"));
+  document.getElementById("aba-" + id).classList.add("ativa");
+  btn.classList.add("ativa");
+  if(id === "historico") carregarCalendario();
+  if(id === "risco")     preencherDatasRisco();
+  if(id === "comparar")  preencherSelectAlunos();
+}
+
+// ===== TURMAS =====
+function chaveAlunos(t)  { return `alunos_${t}`; }
+function chaveChamada(t) { return `chamada_${t}`; }
+
+function getAlunos(t) {
+  const s = localStorage.getItem(chaveAlunos(t));
+  if(s) return JSON.parse(s);
+  if(t==="2D") {
+    const lista = [...ALUNOS_PADRAO_2D];
+    localStorage.setItem(chaveAlunos(t), JSON.stringify(lista));
+    return lista;
+  }
+  return [];
+}
+function salvarAlunosTurma(t,lista) { localStorage.setItem(chaveAlunos(t), JSON.stringify(lista)); }
+
+function gerarBotoesTurma() {
+  const cont = document.getElementById("turmaGrupos");
+  cont.innerHTML = "";
+  SERIES.forEach(s => {
+    const g = document.createElement("div"); g.className="turma-grupo";
+    const lbl = document.createElement("span"); lbl.className="turma-grupo-label"; lbl.innerText=s+"º";
+    g.appendChild(lbl);
+    LETRAS.forEach(l => {
+      const id=s+l, btn=document.createElement("button");
+      btn.className="btn-turma"+(id===turmaSelecionada?" ativa":"");
+      btn.innerText=id; btn.onclick=()=>trocarTurma(id);
+      g.appendChild(btn);
+    });
+    cont.appendChild(g);
+  });
+}
+
+function trocarTurma(t) {
+  turmaSelecionada=t;
+  localStorage.setItem("ultima_turma",t);
+  document.getElementById("subtitulo").innerText=`TURMA ${t} — 2026`;
+  document.querySelectorAll(".btn-turma").forEach(b=>b.classList.toggle("ativa",b.innerText===t));
+  linhaFoco=-1;
+  gerarTabela();
+}
+
+// ===== TABELA =====
+function gerarTabela() {
+  const alunos=getAlunos(turmaSelecionada);
+  const tbody=document.getElementById("tabela");
+  tbody.innerHTML="";
+  document.getElementById("total").innerText=alunos.length;
+
+  if(!alunos.length) {
+    tbody.innerHTML=`<tr><td colspan="12" style="padding:28px;color:var(--text-mute);font-style:italic;text-align:center">
+      Nenhum aluno cadastrado. Clique em "Gerenciar Alunos" para adicionar.</td></tr>`;
+    atualizarResumo(); return;
+  }
+
+  alunos.forEach((nome,i)=>{
+    const tr=document.createElement("tr");
+    tr.dataset.nome=nome.toLowerCase();
+    tr.dataset.idx=i;
+    tr.tabIndex=0;
+    let cel=`<td class="num">${i+1}</td><td class="nome">${nome}<span id="consec-${i}" class="badge-consec" style="display:none"></span></td>`;
+    for(let a=0;a<NUM_AULAS;a++)
+      cel+=`<td><button class="status presente" data-aluno="${i}" data-aula="${a}" onclick="mudarStatus(this)">P</button></td>`;
+    cel+=`<td><span class="pct ok" id="pct-${i}">100%</span></td>`;
+    tr.innerHTML=cel;
+    tbody.appendChild(tr);
+  });
+
+  carregarLocal();
+  atualizarResumo();
+}
+
+// ===== MUDAR STATUS =====
+function mudarStatus(btn) {
+  if(btn.classList.contains("presente"))         { btn.classList.replace("presente","falta"); btn.innerText="F"; }
+  else if(btn.classList.contains("falta"))        { btn.classList.replace("falta","justificada"); btn.innerText="J"; }
+  else                                            { btn.classList.replace("justificada","presente"); btn.innerText="P"; }
+  atualizarResumo();
+  atualizarPctAluno(btn.dataset.aluno);
+}
+
+// ===== % PRESENÇA + CONSECUTIVOS =====
+function atualizarPctAluno(idx) {
+  const linha=document.querySelector(`[data-aluno="${idx}"][data-aula="0"]`)?.closest("tr");
+  if(!linha) return;
+  const botoes=[...linha.querySelectorAll(".status")];
+  const pres  =botoes.filter(b=>b.classList.contains("presente")).length;
+  const faltas=botoes.filter(b=>b.classList.contains("falta")).length;
+  const pct   =Math.round(pres/NUM_AULAS*100);
+  const span  =document.getElementById(`pct-${idx}`);
+  if(span) { span.innerText=pct+"%"; span.className="pct "+(pct>=75?"ok":pct>=50?"med":"bad"); }
+  linha.classList.toggle("risco-falta", faltas/NUM_AULAS > LIMITE_FALTA);
+
+  // badge consecutivo
+  let consec=0, max=0;
+  botoes.forEach(b=>{ if(b.classList.contains("falta")) { consec++; max=Math.max(max,consec); } else consec=0; });
+  const badge=document.getElementById(`consec-${idx}`);
+  if(badge) { if(max>=3){ badge.innerText=`${max}F 🔴`; badge.style.display="inline-block"; } else badge.style.display="none"; }
+}
+
+// ===== MARCAR TODOS =====
+function marcarTodosPresente() {
+  document.querySelectorAll(".status").forEach(b=>{ b.className="status presente"; b.innerText="P"; });
+  getAlunos(turmaSelecionada).forEach((_,i)=>{
+    const span=document.getElementById(`pct-${i}`);
+    if(span){span.innerText="100%";span.className="pct ok";}
+    document.querySelector(`[data-aluno="${i}"][data-aula="0"]`)?.closest("tr")?.classList.remove("risco-falta");
+    const badge=document.getElementById(`consec-${i}`); if(badge) badge.style.display="none";
+  });
+  atualizarResumo(); toast("✅ Todos marcados como presentes!");
+}
+
+function marcarTodosFalta() {
+  if(!confirm("Marcar TODOS como falta?")) return;
+  document.querySelectorAll(".status").forEach(b=>{ b.className="status falta"; b.innerText="F"; });
+  getAlunos(turmaSelecionada).forEach((_,i)=>{
+    const span=document.getElementById(`pct-${i}`);
+    if(span){span.innerText="0%";span.className="pct bad";}
+    document.querySelector(`[data-aluno="${i}"][data-aula="0"]`)?.closest("tr")?.classList.add("risco-falta");
+    const badge=document.getElementById(`consec-${i}`);
+    if(badge){badge.innerText=`${NUM_AULAS}F 🔴`;badge.style.display="inline-block";}
+  });
+  atualizarResumo(); toast("❌ Todos marcados como falta!");
+}
+
+// ===== RESUMO =====
+function atualizarResumo() {
+  const p=document.querySelectorAll(".status.presente").length;
+  const f=document.querySelectorAll(".status.falta").length;
+  const j=document.querySelectorAll(".status.justificada").length;
+  const t=p+f+j||1;
+  const risco=document.querySelectorAll("#tabela tr.risco-falta").length;
+  document.getElementById("presentes").innerText=p;
+  document.getElementById("faltas").innerText=f;
+  document.getElementById("justificadas").innerText=j;
+  document.getElementById("em-risco").innerText=risco;
+  document.getElementById("bar-p").style.width=(p/t*100)+"%";
+  document.getElementById("bar-f").style.width=(f/t*100)+"%";
+  document.getElementById("bar-j").style.width=(j/t*100)+"%";
+  const tot=getAlunos(turmaSelecionada).length||1;
+  document.getElementById("bar-risco").style.width=(risco/tot*100)+"%";
+}
+
+// ===== PESQUISA =====
+document.getElementById("pesquisa").addEventListener("input",function(){
+  const val=this.value.toLowerCase().trim();
+  document.querySelectorAll("#tabela tr").forEach(tr=>{
+    tr.style.display=(tr.dataset.nome||"").includes(val)?"":"none";
+  });
+});
+
+// ===== SALVAR LOCAL =====
+function salvarLocal() {
+  const estado={};
+  document.querySelectorAll(".status").forEach(btn=>{
+    estado[`${btn.dataset.aluno}-${btn.dataset.aula}`]=
+      btn.classList.contains("presente")?"P":btn.classList.contains("falta")?"F":"J";
+  });
+  localStorage.setItem(chaveChamada(turmaSelecionada),JSON.stringify(estado));
+}
+
+function carregarLocal() {
+  const salvo=localStorage.getItem(chaveChamada(turmaSelecionada));
+  if(!salvo) return;
+  const estado=JSON.parse(salvo);
+  document.querySelectorAll(".status").forEach(btn=>{
+    const s=estado[`${btn.dataset.aluno}-${btn.dataset.aula}`];
+    if(s){btn.className="status "+(s==="P"?"presente":s==="F"?"falta":"justificada");btn.innerText=s;}
+  });
+  getAlunos(turmaSelecionada).forEach((_,i)=>atualizarPctAluno(i));
+}
+
+// ===== SALVAR PHP =====
+function salvarChamada() {
+  const alunos=getAlunos(turmaSelecionada), payload=[];
+  document.querySelectorAll("#tabela tr").forEach((tr,i)=>{
+    const aulas=[...tr.querySelectorAll(".status")].map(b=>b.innerText);
+    if(alunos[i]) payload.push({nome:alunos[i],turma:turmaSelecionada,aulas});
+  });
+  salvarLocal();
+  fetch("salvar.php",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)})
+    .then(r=>r.text()).then(()=>toast("💾 Chamada salva com sucesso!"))
+    .catch(()=>toast("📦 Salvo localmente (servidor offline)"));
+}
+
+// ===== EXPORTAR CSV =====
+function exportarCSV() {
+  const alunos=getAlunos(turmaSelecionada);
+  const dataStr=document.getElementById("dataAtual").innerText.replace("📅 ","");
+  let csv=`Turma,Nº,Nome,1ª,2ª,3ª,4ª,5ª,6ª,7ª,8ª,9ª,% Presença\n`;
+  document.querySelectorAll("#tabela tr").forEach((tr,i)=>{
+    const btns=[...tr.querySelectorAll(".status")].map(b=>b.innerText);
+    const pres=btns.filter(b=>b==="P").length;
+    if(alunos[i]) csv+=`${turmaSelecionada},${i+1},"${alunos[i]}",${btns.join(",")},${Math.round(pres/NUM_AULAS*100)}%\n`;
+  });
+  const a=Object.assign(document.createElement("a"),{
+    href:URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"})),
+    download:`chamada_${turmaSelecionada}_${dataStr}.csv`
+  });
+  a.click(); toast("📊 CSV exportado!");
+}
+
+// ===== IMPRIMIR =====
+function imprimirChamada() {
+  document.getElementById("print-turma").innerText=turmaSelecionada;
+  document.getElementById("print-data").innerText=document.getElementById("dataAtual").innerText;
+  window.print();
+}
+
+// ===== ATALHOS DE TECLADO =====
+document.addEventListener("keydown", e => {
+  const abaChamada = document.getElementById("aba-chamada").classList.contains("ativa");
+  if(!abaChamada) return;
+
+  const linhas=[...document.querySelectorAll("#tabela tr")].filter(r=>r.style.display!=="none" && r.dataset.idx!==undefined);
+  if(!linhas.length) return;
+
+  if(e.key==="ArrowDown") {
+    e.preventDefault();
+    if(linhaFoco>=0) linhas[linhaFoco]?.classList.remove("foco-teclado");
+    linhaFoco=Math.min(linhaFoco+1,linhas.length-1);
+    linhas[linhaFoco].classList.add("foco-teclado");
+    linhas[linhaFoco].scrollIntoView({block:"nearest"});
+    return;
+  }
+  if(e.key==="ArrowUp") {
+    e.preventDefault();
+    if(linhaFoco>=0) linhas[linhaFoco]?.classList.remove("foco-teclado");
+    linhaFoco=Math.max(linhaFoco-1,0);
+    linhas[linhaFoco].classList.add("foco-teclado");
+    linhas[linhaFoco].scrollIntoView({block:"nearest"});
+    return;
+  }
+  if(linhaFoco<0) return;
+
+  // Só age se não estiver digitando num input
+  if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)) return;
+
+  const tr=linhas[linhaFoco];
+  if(!tr) return;
+  const botoes=[...tr.querySelectorAll(".status")];
+
+  const tecla=e.key.toLowerCase();
+  if(tecla==="p" || tecla==="f" || tecla==="j") {
+    e.preventDefault();
+    // Aplica o status a todas as aulas da linha
+    botoes.forEach(btn=>{
+      btn.className="status "+(tecla==="p"?"presente":tecla==="f"?"falta":"justificada");
+      btn.innerText=tecla.toUpperCase();
+    });
+    atualizarResumo();
+    atualizarPctAluno(tr.dataset.idx);
+    toast(`Linha ${parseInt(tr.dataset.idx)+1}: ${tecla==="p"?"✅ Presente":tecla==="f"?"❌ Falta":"📄 Justificada"}`);
+  }
+
+  if(e.key==="Enter") {
+    e.preventDefault();
+    linhas[linhaFoco]?.classList.remove("foco-teclado");
+    linhaFoco=Math.min(linhaFoco+1,linhas.length-1);
+    linhas[linhaFoco].classList.add("foco-teclado");
+    linhas[linhaFoco].scrollIntoView({block:"nearest"});
+  }
+});
+
+// ===== MODAL ALUNOS =====
+function abrirModalAlunos() {
+  document.getElementById("modal-sub").innerText=`Turma ${turmaSelecionada}`;
+  renderListaModal();
+  document.getElementById("modalOverlay").classList.add("aberto");
+  setTimeout(()=>document.getElementById("inputNovoAluno").focus(),200);
+}
+function fecharModal() { document.getElementById("modalOverlay").classList.remove("aberto"); gerarTabela(); }
+function fecharModalFora(e){ if(e.target===document.getElementById("modalOverlay")) fecharModal(); }
+
+function renderListaModal() {
+  const lista=document.getElementById("listaModalAlunos");
+  const alunos=getAlunos(turmaSelecionada);
+  lista.innerHTML="";
+  if(!alunos.length){
+    lista.innerHTML=`<div class="item-aluno" style="color:var(--text-mute);font-style:italic;justify-content:center">Nenhum aluno cadastrado</div>`;
+    return;
+  }
+  alunos.forEach((nome,i)=>{
+    const div=document.createElement("div"); div.className="item-aluno";
+    div.innerHTML=`<div><span class="num-aluno">${String(i+1).padStart(2,"0")}</span><span>${nome}</span></div>
+      <button class="btn-remover" onclick="removerAluno(${i})" title="Remover">✕</button>`;
+    lista.appendChild(div);
+  });
+}
+
+function adicionarAluno() {
+  const input=document.getElementById("inputNovoAluno");
+  const nome=input.value.trim();
+  if(!nome){input.focus();return;}
+  const alunos=getAlunos(turmaSelecionada);
+  if(alunos.find(a=>a.toLowerCase()===nome.toLowerCase())){toast("⚠️ Aluno já cadastrado!");return;}
+  alunos.push(nome);
+  salvarAlunosTurma(turmaSelecionada,alunos);
+  input.value=""; renderListaModal(); toast(`✅ ${nome} adicionado!`); input.focus();
+}
+
+function removerAluno(idx) {
+  const alunos=getAlunos(turmaSelecionada);
+  if(!confirm(`Remover "${alunos[idx]}" da turma ${turmaSelecionada}?`)) return;
+  const nome=alunos.splice(idx,1)[0];
+  salvarAlunosTurma(turmaSelecionada,alunos);
+  localStorage.removeItem(chaveChamada(turmaSelecionada));
+  renderListaModal(); toast(`🗑️ ${nome} removido.`);
+}
+
+// ===== HISTÓRICO: CALENDÁRIO =====
+function mudarMesHist(dir){ calMes+=dir; if(calMes<0){calMes=11;calAno--;} if(calMes>11){calMes=0;calAno++;} carregarCalendario(); }
+
+function carregarCalendario() {
+  const meses=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  document.getElementById("cal-titulo").innerText=`${meses[calMes]} ${calAno}`;
+
+  // Tenta buscar do PHP, fallback localStorage
+  fetch(`historico.php?acao=dias&turma=${turmaSelecionada}`)
+    .then(r=>r.json())
+    .then(dias=>renderCalendario(dias))
+    .catch(()=>{
+      // fallback: pega datas salvas no localStorage
+      const dias=[];
+      for(let k in localStorage){
+        if(k.startsWith("chamada_hist_")) dias.push(k.replace("chamada_hist_",""));
+      }
+      renderCalendario(dias);
+    });
+}
+
+function renderCalendario(diasComChamada) {
+  const cal=document.getElementById("calendario");
+  cal.innerHTML="";
+  const diasSemana=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+  diasSemana.forEach(d=>{ const h=document.createElement("div"); h.className="cal-header"; h.innerText=d; cal.appendChild(h); });
+
+  const primeiroDia=new Date(calAno,calMes,1).getDay();
+  const totalDias  =new Date(calAno,calMes+1,0).getDate();
+  const hj=new Date();
+
+  for(let i=0;i<primeiroDia;i++){
+    const v=document.createElement("div"); v.className="cal-dia vazio"; cal.appendChild(v);
+  }
+
+  for(let d=1;d<=totalDias;d++){
+    const dateStr=`${calAno}-${String(calMes+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const temChamada=diasComChamada.includes(dateStr);
+    const eHoje=hj.getDate()===d && hj.getMonth()===calMes && hj.getFullYear()===calAno;
+
+    const el=document.createElement("div");
+    el.className="cal-dia"+(temChamada?" tem-chamada":"")+(eHoje?" hoje":"");
+    el.innerText=d;
+    if(temChamada) el.onclick=()=>verChamadaDia(dateStr);
+    cal.appendChild(el);
+  }
+}
+
+function verChamadaDia(data) {
+  document.querySelectorAll(".cal-dia").forEach(el=>el.classList.remove("selecionado"));
+  event.target.classList.add("selecionado");
+
+  fetch(`historico.php?acao=dia&turma=${turmaSelecionada}&data=${data}`)
+    .then(r=>r.json())
+    .then(alunos=>renderHistTabela(alunos,data))
+    .catch(()=>toast("⚠️ Erro ao carregar histórico do servidor"));
+}
+
+function renderHistTabela(alunos,data) {
+  const wrap=document.getElementById("hist-resultado");
+  const thead=document.getElementById("hist-thead");
+  const tbody=document.getElementById("hist-tbody");
+
+  const [ano,mes,dia]=data.split("-");
+  thead.innerHTML=`<th>Nome</th>${Array.from({length:NUM_AULAS},(_,i)=>`<th>${i+1}ª</th>`).join("")}<th>% Presença</th>`;
+  tbody.innerHTML="";
+
+  alunos.forEach(a=>{
+    const tr=document.createElement("tr");
+    const aulas=a.aulas||[];
+    const pres=aulas.filter(s=>s==="P").length;
+    const pct=aulas.filter(s=>s!==null).length ? Math.round(pres/NUM_AULAS*100) : null;
+    let cells=`<td style="text-align:left;font-weight:600">${a.nome}</td>`;
+    aulas.forEach(s=>{
+      const cls=s==="P"?"presente":s==="F"?"falta":s==="J"?"justificada":"";
+      cells+=`<td><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;font-size:.72rem;font-weight:700;color:${s==="J"?"#1a1d23":"white"};background:${s==="P"?"var(--green)":s==="F"?"var(--red)":s==="J"?"var(--yellow)":"var(--border)"}">${s||"—"}</span></td>`;
+    });
+    cells+=`<td><span class="pct ${pct===null?"":pct>=75?"ok":pct>=50?"med":"bad"}">${pct!==null?pct+"%":"—"}</span></td>`;
+    tr.innerHTML=cells; tbody.appendChild(tr);
+  });
+
+  wrap.style.display="block";
+  wrap.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+// ===== EM RISCO =====
+function preencherDatasRisco() {
+  const agora=new Date();
+  const ini=new Date(agora.getFullYear(),agora.getMonth(),1);
+  document.getElementById("risco-inicio").value=ini.toISOString().split("T")[0];
+  document.getElementById("risco-fim").value=agora.toISOString().split("T")[0];
+}
+
+function carregarRisco() {
+  const inicio=document.getElementById("risco-inicio").value;
+  const fim   =document.getElementById("risco-fim").value;
+  if(!inicio||!fim){toast("⚠️ Preencha as datas!");return;}
+
+  document.getElementById("risco-subtitulo").innerText=`(${formatarData(inicio)} – ${formatarData(fim)})`;
+  const lista=document.getElementById("risco-lista");
+  lista.innerHTML=`<p style="color:var(--text-mute);font-style:italic">Buscando...</p>`;
+
+  fetch(`historico.php?acao=risco&turma=${turmaSelecionada}&inicio=${inicio}&fim=${fim}`)
+    .then(r=>r.json())
+    .then(dados=>{
+      if(!dados.length){ lista.innerHTML=`<p style="color:var(--green);font-weight:600">✅ Nenhum aluno em risco neste período!</p>`; return; }
+      lista.innerHTML="";
+      dados.forEach(a=>{
+        const div=document.createElement("div"); div.className="risco-item";
+        div.innerHTML=`
+          <span class="risco-nome">${a.nome}</span>
+          <div class="risco-bar-wrap"><div class="risco-bar" style="width:${a.pct_falta}%"></div></div>
+          <span class="risco-pct">${a.pct_falta}%</span>
+          <span style="font-size:.75rem;color:var(--text-mute);white-space:nowrap">${a.faltas}F / ${a.total} aulas</span>`;
+        lista.appendChild(div);
+      });
+    })
+    .catch(()=>{
+      lista.innerHTML=`<p style="color:var(--red)">⚠️ Servidor offline. O histórico requer conexão com o banco de dados.</p>`;
+    });
+}
+
+// ===== COMPARAR =====
+function preencherSelectAlunos() {
+  const sel=document.getElementById("comp-aluno");
+  sel.innerHTML="";
+  fetch(`historico.php?acao=alunos&turma=${turmaSelecionada}`)
+    .then(r=>r.json())
+    .then(alunos=>{
+      alunos.forEach(a=>{ const op=document.createElement("option"); op.value=a.id; op.innerText=a.nome; sel.appendChild(op); });
+    })
+    .catch(()=>{
+      // fallback: localStorage
+      getAlunos(turmaSelecionada).forEach((nome,i)=>{ const op=document.createElement("option"); op.value=i; op.innerText=nome; sel.appendChild(op); });
+    });
+
+  const agora=new Date();
+  const mesAnt=new Date(agora.getFullYear(),agora.getMonth()-1,1);
+  document.getElementById("comp-mes1").value=mesAnt.toISOString().slice(0,7);
+  document.getElementById("comp-mes2").value=agora.toISOString().slice(0,7);
+}
+
+function compararAluno() {
+  const alunoId=document.getElementById("comp-aluno").value;
+  const mes1   =document.getElementById("comp-mes1").value;
+  const mes2   =document.getElementById("comp-mes2").value;
+  const nomeAluno=document.getElementById("comp-aluno").selectedOptions[0]?.text||"";
+  if(!alunoId||!mes1||!mes2){toast("⚠️ Preencha todos os campos!");return;}
+
+  const res=document.getElementById("comparar-resultado");
+  res.innerHTML=`<p style="color:var(--text-mute);font-style:italic;grid-column:1/-1">Buscando...</p>`;
+  res.style.display="grid";
+
+  fetch(`historico.php?acao=comparar&aluno_id=${alunoId}&mes1=${mes1}&mes2=${mes2}`)
+    .then(r=>r.json())
+    .then(dados=>renderComparar(dados,mes1,mes2,nomeAluno))
+    .catch(()=>{
+      res.innerHTML=`<p style="color:var(--red);grid-column:1/-1">⚠️ Servidor offline. Comparação requer banco de dados.</p>`;
+    });
+}
+
+function renderComparar(dados,mes1,mes2,nome) {
+  const res=document.getElementById("comparar-resultado");
+
+  function blocoMes(diasArr,mesStr) {
+    if(!diasArr.length) return `<p style="color:var(--text-mute);font-style:italic">Sem registros neste mês.</p>`;
+    const totP=diasArr.reduce((s,d)=>s+parseInt(d.p||0),0);
+    const totF=diasArr.reduce((s,d)=>s+parseInt(d.f_count||0),0);
+    const totJ=diasArr.reduce((s,d)=>s+parseInt(d.j||0),0);
+    const tot =totP+totF+totJ||1;
+    return `
+      <div class="comparar-mini"><span class="label">✅ Presenças</span><span class="val" style="color:var(--green)">${totP}</span></div>
+      <div class="comparar-mini"><span class="label">❌ Faltas</span><span class="val" style="color:var(--red)">${totF}</span></div>
+      <div class="comparar-mini"><span class="label">📄 Justificadas</span><span class="val" style="color:var(--yellow)">${totJ}</span></div>
+      <div class="comparar-mini"><span class="label">% Presença</span><span class="val">${Math.round(totP/tot*100)}%</span></div>
+      <div class="comparar-mini"><span class="label">Dias com chamada</span><span class="val">${diasArr.length}</span></div>`;
+  }
+
+  const nomeMes1=new Date(mes1+"-15").toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
+  const nomeMes2=new Date(mes2+"-15").toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
+
+  res.innerHTML=`
+    <div class="comparar-card">
+      <h4>📅 ${nomeMes1}</h4>
+      ${blocoMes(dados.mes1,mes1)}
+    </div>
+    <div class="comparar-card">
+      <h4>📅 ${nomeMes2}</h4>
+      ${blocoMes(dados.mes2,mes2)}
+    </div>`;
+}
+
+// ===== UTILITÁRIOS =====
+function formatarData(dateStr) {
+  const [a,m,d]=dateStr.split("-");
+  return `${d}/${m}/${a}`;
+}
+
+// ===== MODO ESCURO =====
+document.getElementById("toggleTheme").addEventListener("click",function(){
+  document.body.classList.toggle("dark");
+  this.innerText=document.body.classList.contains("dark")?"☀️ Modo Claro":"🌙 Modo Escuro";
+  localStorage.setItem("tema_2d",document.body.classList.contains("dark")?"dark":"light");
+});
+if(localStorage.getItem("tema_2d")==="dark"){
+  document.body.classList.add("dark");
+  document.getElementById("toggleTheme").innerText="☀️ Modo Claro";
+}
+
+// ===== SAIR =====
+function sair(){
+  if(!confirm("Deseja sair do sistema?")) return;
+  localStorage.removeItem("chamada_sessao");
+  sessionStorage.removeItem("chamada_sessao");
+  window.location.href="index.html";
+}
+
+// ===== DATA =====
+const hj=new Date();
+document.getElementById("dataAtual").innerText=
+  "📅 "+hj.toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"2-digit",year:"numeric"});
+
+// ===== TOAST =====
+function toast(msg){
+  const el=document.getElementById("toast");
+  el.innerText=msg; el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"),2800);
+}
+
+// ===== INIT =====
+gerarBotoesTurma();
+gerarTabela();
+</script>
+</body>
+</html>
