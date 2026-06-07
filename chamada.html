@@ -103,7 +103,9 @@ tbody tr:last-child { border-bottom:none; }
 tbody tr:hover { background:var(--bg); }
 tbody tr.risco-falta { background:rgba(220,38,38,.06); }
 body.dark tbody tr.risco-falta { background:rgba(220,38,38,.12); }
-tbody tr.foco-teclado { outline:2px solid var(--blue); outline-offset:-2px; }
+tbody tr.foco-teclado { background: rgba(37,99,235,.06) !important; }
+body.dark tbody tr.foco-teclado { background: rgba(37,99,235,.12) !important; }
+.status.foco-aula { outline:3px solid white; outline-offset:2px; box-shadow:0 0 0 5px var(--blue) !important; transform:scale(1.15) !important; z-index:1; position:relative; }
 td { padding:8px; text-align:center; font-size:.84rem; vertical-align:middle; }
 td.num { color:var(--text-mute); font-family:'JetBrains Mono',monospace; font-size:.76rem; padding-left:14px; }
 td.nome { text-align:left; font-weight:600; }
@@ -196,6 +198,93 @@ td.nome { text-align:left; font-weight:600; }
 #toast { position:fixed; bottom:22px; right:22px; background:#1a1d23; color:white; padding:10px 16px; border-radius:11px; font-size:.83rem; font-weight:600; box-shadow:0 8px 24px rgba(0,0,0,.3); opacity:0; transform:translateY(10px); transition:opacity .3s,transform .3s; pointer-events:none; z-index:999; }
 #toast.show { opacity:1; transform:translateY(0); }
 
+/* BOTÃO ENGRENAGEM */
+.btn-config {
+  background: var(--surface); color: var(--text);
+  border: 1.5px solid var(--border);
+  width: 36px; height: 36px; padding: 0;
+  border-radius: 10px; font-size: 1rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: transform .3s, box-shadow .15s, border-color .2s;
+}
+.btn-config:hover { border-color: var(--blue); transform: rotate(45deg) translateY(-1px); }
+
+/* MODAL CONFIGURAÇÕES */
+.cfg-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,.5); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.cfg-overlay.aberto { opacity: 1; pointer-events: all; }
+
+.cfg-modal {
+  background: var(--surface); border-radius: 20px;
+  padding: 28px 28px; width: 100%; max-width: 520px;
+  max-height: 88vh; overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(0,0,0,.35);
+  border: 1.5px solid var(--border);
+  transform: translateY(24px) scale(.97);
+  transition: transform .28s cubic-bezier(.16,1,.3,1);
+}
+.cfg-overlay.aberto .cfg-modal { transform: translateY(0) scale(1); }
+
+.cfg-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+.cfg-header h2 { font-size: 1.15rem; font-weight: 700; }
+.cfg-fechar { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--text-mute); padding: 4px 8px; border-radius: 8px; transition: background .15s; }
+.cfg-fechar:hover { background: var(--border); }
+
+.cfg-secao { margin-bottom: 22px; }
+.cfg-secao-titulo {
+  font-size: .72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .8px; color: var(--text-mute);
+  margin-bottom: 12px; padding-bottom: 6px;
+  border-bottom: 1.5px solid var(--border);
+}
+
+.cfg-linha { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 12px; }
+.cfg-linha label { font-size: .88rem; font-weight: 600; flex: 1; }
+.cfg-linha span  { font-size: .78rem; color: var(--text-mute); }
+
+.cfg-input {
+  padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 10px;
+  background: var(--bg); color: var(--text);
+  font-family: 'Sora', sans-serif; font-size: .86rem; outline: none;
+  transition: border .2s; width: 200px;
+}
+.cfg-input:focus { border-color: var(--blue); }
+
+/* CORES */
+.cores-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+.cor-opcao {
+  width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+  border: 2.5px solid transparent; transition: transform .15s, border-color .15s;
+}
+.cor-opcao:hover   { transform: scale(1.12); }
+.cor-opcao.ativa   { border-color: var(--text); box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px currentColor; }
+
+/* TAMANHO FONTE */
+.fonte-btns { display: flex; gap: 6px; }
+.fonte-btn {
+  padding: 6px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+  background: var(--surface); color: var(--text); cursor: pointer;
+  font-family: 'Sora', sans-serif; font-weight: 600; transition: all .15s;
+}
+.fonte-btn:hover  { border-color: var(--blue); color: var(--blue); }
+.fonte-btn.ativa  { background: var(--blue); color: white; border-color: var(--blue); }
+
+/* IMPRESSÃO OPÇÕES */
+.radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.radio-btn {
+  padding: 6px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+  background: var(--surface); color: var(--text); cursor: pointer;
+  font-family: 'Sora', sans-serif; font-size: .82rem; font-weight: 600; transition: all .15s;
+}
+.radio-btn:hover { border-color: var(--blue); color: var(--blue); }
+.radio-btn.ativo { background: var(--blue); color: white; border-color: var(--blue); }
+
+.cfg-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; border-top: 1.5px solid var(--border); padding-top: 18px; }
+
 /* IMPRESSÃO */
 @media print {
   body { background:white; padding:0; }
@@ -229,6 +318,7 @@ td.nome { text-align:left; font-weight:600; }
       <span id="subtitulo">TURMA 2D — 2026</span>
     </div>
     <div class="topo-acoes">
+      <button class="btn btn-config" onclick="abrirConfig()" title="Configurações">⚙️</button>
       <button class="btn btn-tema" id="toggleTheme">🌙 Modo Escuro</button>
       <div class="chip-data" id="dataAtual"></div>
       <button class="btn btn-sair" onclick="sair()">🚪 Sair</button>
@@ -315,8 +405,8 @@ td.nome { text-align:left; font-weight:600; }
     </div>
 
     <p class="atalhos-hint">
-      ⌨️ Atalhos de teclado (selecione uma linha com ↑↓):
-      <kbd>P</kbd> Presente &nbsp; <kbd>F</kbd> Falta &nbsp; <kbd>J</kbd> Justificada &nbsp; <kbd>Enter</kbd> Próximo aluno
+      ⌨️ Atalhos: ↑↓ Navegar aluno · ←→ Navegar aula · P Presente · F Falta · J Justificada · Enter Próximo aluno
+
     </p>
 
   </div>
@@ -405,6 +495,83 @@ td.nome { text-align:left; font-weight:600; }
     <div class="modal-footer">
       <button class="btn btn-tema" onclick="fecharModal()">Fechar</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIGURAÇÕES -->
+<div class="cfg-overlay" id="cfgOverlay" onclick="fecharConfigFora(event)">
+  <div class="cfg-modal">
+
+    <div class="cfg-header">
+      <h2>⚙️ Configurações</h2>
+      <button class="cfg-fechar" onclick="fecharConfig()">✕</button>
+    </div>
+
+    <!-- ESCOLA -->
+    <div class="cfg-secao">
+      <div class="cfg-secao-titulo">🏫 Dados da Escola</div>
+      <div class="cfg-linha">
+        <label>Nome da escola</label>
+        <input class="cfg-input" id="cfg-escola" type="text" placeholder="Ex: EEEP Walter Ramos">
+      </div>
+      <div class="cfg-linha">
+        <label>Ano letivo</label>
+        <input class="cfg-input" id="cfg-ano" type="number" placeholder="2026" style="width:120px">
+      </div>
+    </div>
+
+    <!-- COR PRINCIPAL -->
+    <div class="cfg-secao">
+      <div class="cfg-secao-titulo">🎨 Cor Principal</div>
+      <div class="cores-grid" id="coresGrid">
+        <div class="cor-opcao" data-cor="#2563eb" style="background:#2563eb" title="Azul"></div>
+        <div class="cor-opcao" data-cor="#16a34a" style="background:#16a34a" title="Verde"></div>
+        <div class="cor-opcao" data-cor="#7c3aed" style="background:#7c3aed" title="Roxo"></div>
+        <div class="cor-opcao" data-cor="#dc2626" style="background:#dc2626" title="Vermelho"></div>
+        <div class="cor-opcao" data-cor="#d97706" style="background:#d97706" title="Laranja"></div>
+        <div class="cor-opcao" data-cor="#0891b2" style="background:#0891b2" title="Ciano"></div>
+        <div class="cor-opcao" data-cor="#db2777" style="background:#db2777" title="Rosa"></div>
+        <div class="cor-opcao" data-cor="#475569" style="background:#475569" title="Cinza"></div>
+      </div>
+    </div>
+
+    <!-- TAMANHO DA FONTE -->
+    <div class="cfg-secao">
+      <div class="cfg-secao-titulo">🔤 Tamanho da Fonte</div>
+      <div class="cfg-linha">
+        <label>Tamanho na tabela</label>
+        <div class="fonte-btns">
+          <button class="fonte-btn" data-fonte="pequena">A</button>
+          <button class="fonte-btn ativa" data-fonte="media" style="font-size:1rem">A</button>
+          <button class="fonte-btn" data-fonte="grande" style="font-size:1.2rem">A</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMPRESSÃO -->
+    <div class="cfg-secao">
+      <div class="cfg-secao-titulo">🖨️ Impressão</div>
+      <div class="cfg-linha">
+        <label>Modo de cor</label>
+        <div class="radio-group">
+          <button class="radio-btn ativo" data-print-cor="colorido">🎨 Colorido</button>
+          <button class="radio-btn" data-print-cor="pb">⬛ Preto e branco</button>
+        </div>
+      </div>
+      <div class="cfg-linha">
+        <label>Tamanho do papel</label>
+        <div class="radio-group">
+          <button class="radio-btn ativo" data-print-papel="A4">A4</button>
+          <button class="radio-btn" data-print-papel="oficio">Ofício</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cfg-footer">
+      <button class="btn btn-tema" onclick="fecharConfig()">Cancelar</button>
+      <button class="btn btn-salvar" onclick="salvarConfig()">💾 Salvar</button>
+    </div>
+
   </div>
 </div>
 
@@ -662,57 +829,114 @@ function imprimirChamada() {
 }
 
 // ===== ATALHOS DE TECLADO =====
+// linhaFoco = índice da linha selecionada
+// aulaFoco  = índice da aula selecionada (0-8), -1 = nenhuma aula selecionada
+let aulaFoco = -1;
+
+function getLinhasVisiveis() {
+  return [...document.querySelectorAll("#tabela tr")]
+    .filter(r => r.style.display !== "none" && r.dataset.idx !== undefined);
+}
+
+function limparFocoAula() {
+  document.querySelectorAll(".status.foco-aula").forEach(b => b.classList.remove("foco-aula"));
+}
+
+function aplicarFocoAula() {
+  limparFocoAula();
+  const linhas = getLinhasVisiveis();
+  if(linhaFoco < 0 || aulaFoco < 0) return;
+  const tr = linhas[linhaFoco];
+  if(!tr) return;
+  const botoes = [...tr.querySelectorAll(".status")];
+  if(botoes[aulaFoco]) {
+    botoes[aulaFoco].classList.add("foco-aula");
+    botoes[aulaFoco].scrollIntoView({block:"nearest"});
+  }
+}
+
+function selecionarLinha(idx) {
+  const linhas = getLinhasVisiveis();
+  linhas.forEach(r => r.classList.remove("foco-teclado"));
+  linhaFoco = idx;
+  aulaFoco = 0; // começa na primeira aula
+  if(linhas[linhaFoco]) {
+    linhas[linhaFoco].classList.add("foco-teclado");
+    linhas[linhaFoco].scrollIntoView({block:"nearest"});
+  }
+  aplicarFocoAula();
+}
+
 document.addEventListener("keydown", e => {
   const abaChamada = document.getElementById("aba-chamada").classList.contains("ativa");
   if(!abaChamada) return;
-
-  const linhas=[...document.querySelectorAll("#tabela tr")].filter(r=>r.style.display!=="none" && r.dataset.idx!==undefined);
-  if(!linhas.length) return;
-
-  if(e.key==="ArrowDown") {
-    e.preventDefault();
-    if(linhaFoco>=0) linhas[linhaFoco]?.classList.remove("foco-teclado");
-    linhaFoco=Math.min(linhaFoco+1,linhas.length-1);
-    linhas[linhaFoco].classList.add("foco-teclado");
-    linhas[linhaFoco].scrollIntoView({block:"nearest"});
-    return;
-  }
-  if(e.key==="ArrowUp") {
-    e.preventDefault();
-    if(linhaFoco>=0) linhas[linhaFoco]?.classList.remove("foco-teclado");
-    linhaFoco=Math.max(linhaFoco-1,0);
-    linhas[linhaFoco].classList.add("foco-teclado");
-    linhas[linhaFoco].scrollIntoView({block:"nearest"});
-    return;
-  }
-  if(linhaFoco<0) return;
-
-  // Só age se não estiver digitando num input
   if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)) return;
 
-  const tr=linhas[linhaFoco];
-  if(!tr) return;
-  const botoes=[...tr.querySelectorAll(".status")];
+  const linhas = getLinhasVisiveis();
+  if(!linhas.length) return;
 
-  const tecla=e.key.toLowerCase();
-  if(tecla==="p" || tecla==="f" || tecla==="j") {
+  // ↓ — próximo aluno
+  if(e.key === "ArrowDown") {
     e.preventDefault();
-    // Aplica o status a todas as aulas da linha
-    botoes.forEach(btn=>{
-      btn.className="status "+(tecla==="p"?"presente":tecla==="f"?"falta":"justificada");
-      btn.innerText=tecla.toUpperCase();
-    });
-    atualizarResumo();
-    atualizarPctAluno(tr.dataset.idx);
-    toast(`Linha ${parseInt(tr.dataset.idx)+1}: ${tecla==="p"?"✅ Presente":tecla==="f"?"❌ Falta":"📄 Justificada"}`);
+    selecionarLinha(Math.min(linhaFoco + 1, linhas.length - 1));
+    return;
   }
 
-  if(e.key==="Enter") {
+  // ↑ — aluno anterior
+  if(e.key === "ArrowUp") {
     e.preventDefault();
-    linhas[linhaFoco]?.classList.remove("foco-teclado");
-    linhaFoco=Math.min(linhaFoco+1,linhas.length-1);
-    linhas[linhaFoco].classList.add("foco-teclado");
-    linhas[linhaFoco].scrollIntoView({block:"nearest"});
+    selecionarLinha(Math.max(linhaFoco - 1, 0));
+    return;
+  }
+
+  if(linhaFoco < 0) return;
+
+  // → — próxima aula
+  if(e.key === "ArrowRight") {
+    e.preventDefault();
+    aulaFoco = Math.min(aulaFoco + 1, NUM_AULAS - 1);
+    aplicarFocoAula();
+    return;
+  }
+
+  // ← — aula anterior
+  if(e.key === "ArrowLeft") {
+    e.preventDefault();
+    aulaFoco = Math.max(aulaFoco - 1, 0);
+    aplicarFocoAula();
+    return;
+  }
+
+  // Enter — avança para próximo aluno
+  if(e.key === "Enter") {
+    e.preventDefault();
+    selecionarLinha(Math.min(linhaFoco + 1, linhas.length - 1));
+    return;
+  }
+
+  // P / F / J — marca a aula selecionada
+  const tecla = e.key.toLowerCase();
+  if(tecla === "p" || tecla === "f" || tecla === "j") {
+    e.preventDefault();
+    const tr = linhas[linhaFoco];
+    if(!tr) return;
+    const botoes = [...tr.querySelectorAll(".status")];
+    const btn = botoes[aulaFoco];
+    if(!btn) return;
+
+    const novaClasse = tecla === "p" ? "presente" : tecla === "f" ? "falta" : "justificada";
+    btn.className = "status " + novaClasse + " foco-aula";
+    btn.innerText  = tecla.toUpperCase();
+
+    atualizarResumo();
+    atualizarPctAluno(tr.dataset.idx);
+
+    // Avança automaticamente para a próxima aula
+    if(aulaFoco < NUM_AULAS - 1) {
+      aulaFoco++;
+      aplicarFocoAula();
+    }
+    return;
   }
 });
 
@@ -991,8 +1215,150 @@ function toast(msg){
   setTimeout(()=>el.classList.remove("show"),2800);
 }
 
+// ===== CONFIGURAÇÕES =====
+const CFG_KEY = "chamada_config";
+
+const CORES = {
+  "#2563eb": "#1d4ed8",
+  "#16a34a": "#15803d",
+  "#7c3aed": "#6d28d9",
+  "#dc2626": "#b91c1c",
+  "#d97706": "#b45309",
+  "#0891b2": "#0e7490",
+  "#db2777": "#be185d",
+  "#475569": "#334155",
+};
+
+function getCfg() {
+  const s = localStorage.getItem(CFG_KEY);
+  return s ? JSON.parse(s) : {
+    escola: "", ano: "2026",
+    cor: "#2563eb", fonte: "media",
+    printCor: "colorido", printPapel: "A4"
+  };
+}
+
+function aplicarConfig(cfg) {
+  // Cor principal
+  const dark = CORES[cfg.cor] || cfg.cor;
+  document.documentElement.style.setProperty("--blue",      cfg.cor);
+  document.documentElement.style.setProperty("--blue-dark", dark);
+
+  // Fonte
+  const tamanhos = { pequena: ".78rem", media: ".84rem", grande: ".96rem" };
+  document.querySelectorAll("td, .status, .pct").forEach(el => {
+    el.style.fontSize = tamanhos[cfg.fonte] || tamanhos.media;
+  });
+
+  // Nome escola no subtítulo
+  if(cfg.escola) {
+    document.getElementById("subtitulo").innerText =
+      `TURMA ${turmaSelecionada} — ${cfg.ano || 2026} · ${cfg.escola}`;
+  }
+
+  // Impressão: papel
+  let styleEl = document.getElementById("print-style-cfg");
+  if(!styleEl) { styleEl = document.createElement("style"); styleEl.id = "print-style-cfg"; document.head.appendChild(styleEl); }
+
+  const papel = cfg.printPapel === "oficio" ? "215.9mm 355.6mm" : "A4";
+  const pb    = cfg.printCor === "pb";
+
+  styleEl.textContent = `
+    @media print {
+      @page { size: ${papel}; margin: 15mm; }
+      ${pb ? `
+        .status.presente    { background: #555 !important; }
+        .status.falta       { background: #000 !important; }
+        .status.justificada { background: #aaa !important; color: #000 !important; }
+        thead tr { background: #333 !important; }
+      ` : ""}
+    }
+  `;
+}
+
+function abrirConfig() {
+  const cfg = getCfg();
+
+  document.getElementById("cfg-escola").value = cfg.escola || "";
+  document.getElementById("cfg-ano").value    = cfg.ano    || "2026";
+
+  // Marcar cor ativa
+  document.querySelectorAll(".cor-opcao").forEach(el => {
+    el.classList.toggle("ativa", el.dataset.cor === cfg.cor);
+  });
+
+  // Marcar fonte ativa
+  document.querySelectorAll(".fonte-btn").forEach(el => {
+    el.classList.toggle("ativa", el.dataset.fonte === cfg.fonte);
+  });
+
+  // Marcar impressão ativa
+  document.querySelectorAll("[data-print-cor]").forEach(el => {
+    el.classList.toggle("ativo", el.dataset.printCor === cfg.printCor);
+  });
+  document.querySelectorAll("[data-print-papel]").forEach(el => {
+    el.classList.toggle("ativo", el.dataset.printPapel === cfg.printPapel);
+  });
+
+  document.getElementById("cfgOverlay").classList.add("aberto");
+}
+
+function fecharConfig() {
+  document.getElementById("cfgOverlay").classList.remove("aberto");
+}
+
+function fecharConfigFora(e) {
+  if(e.target === document.getElementById("cfgOverlay")) fecharConfig();
+}
+
+function salvarConfig() {
+  const cfg = {
+    escola:     document.getElementById("cfg-escola").value.trim(),
+    ano:        document.getElementById("cfg-ano").value.trim() || "2026",
+    cor:        document.querySelector(".cor-opcao.ativa")?.dataset.cor      || "#2563eb",
+    fonte:      document.querySelector(".fonte-btn.ativa")?.dataset.fonte    || "media",
+    printCor:   document.querySelector("[data-print-cor].ativo")?.dataset.printCor   || "colorido",
+    printPapel: document.querySelector("[data-print-papel].ativo")?.dataset.printPapel || "A4",
+  };
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+  aplicarConfig(cfg);
+  fecharConfig();
+  toast("✅ Configurações salvas!");
+}
+
+// Clique nas cores
+document.getElementById("coresGrid").addEventListener("click", e => {
+  const op = e.target.closest(".cor-opcao");
+  if(!op) return;
+  document.querySelectorAll(".cor-opcao").forEach(el => el.classList.remove("ativa"));
+  op.classList.add("ativa");
+});
+
+// Clique nos tamanhos de fonte
+document.querySelectorAll(".fonte-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".fonte-btn").forEach(b => b.classList.remove("ativa"));
+    btn.classList.add("ativa");
+  });
+});
+
+// Clique nos radio de impressão
+document.querySelectorAll("[data-print-cor]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("[data-print-cor]").forEach(b => b.classList.remove("ativo"));
+    btn.classList.add("ativo");
+  });
+});
+document.querySelectorAll("[data-print-papel]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("[data-print-papel]").forEach(b => b.classList.remove("ativo"));
+    btn.classList.add("ativo");
+  });
+});
+
 // ===== INIT =====
 gerarBotoesTurma();
+aplicarConfig(getCfg());
 gerarTabela();
 </script>
 </body>
