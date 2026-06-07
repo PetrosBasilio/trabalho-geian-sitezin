@@ -655,10 +655,26 @@ function gerarBotoesTurma() {
 function trocarTurma(t) {
   turmaSelecionada=t;
   localStorage.setItem("ultima_turma",t);
-  document.getElementById("subtitulo").innerText=`TURMA ${t} — 2026`;
+  document.getElementById("subtitulo").innerText=`TURMA ${t} — ${getCfg().ano||2026}`;
   document.querySelectorAll(".btn-turma").forEach(b=>b.classList.toggle("ativa",b.innerText===t));
-  linhaFoco=-1;
-  gerarTabela();
+  linhaFoco=-1; aulaFoco=-1;
+
+  // Sincroniza alunos do banco para o localStorage ao trocar de turma
+  fetch(`gerenciar_alunos.php?acao=listar&turma=${t}`)
+    .then(r => r.json())
+    .then(d => {
+      if(d.alunos && d.alunos.length > 0) {
+        const nomesLocal  = getAlunos(t);
+        const nomesBanco  = d.alunos.map(a => a.nome);
+        // Adiciona ao localStorage alunos que existem no banco mas não localmente
+        const novos = nomesBanco.filter(n => !nomesLocal.includes(n));
+        if(novos.length > 0) {
+          salvarAlunosTurma(t, [...nomesLocal, ...novos]);
+        }
+      }
+      gerarTabela();
+    })
+    .catch(() => gerarTabela()); // offline: usa localStorage normalmente
 }
 
 // ===== TABELA =====
@@ -967,23 +983,59 @@ function renderListaModal() {
 }
 
 function adicionarAluno() {
-  const input=document.getElementById("inputNovoAluno");
-  const nome=input.value.trim();
-  if(!nome){input.focus();return;}
-  const alunos=getAlunos(turmaSelecionada);
-  if(alunos.find(a=>a.toLowerCase()===nome.toLowerCase())){toast("⚠️ Aluno já cadastrado!");return;}
+  const input = document.getElementById("inputNovoAluno");
+  const nome  = input.value.trim();
+  if(!nome){ input.focus(); return; }
+
+  const alunos = getAlunos(turmaSelecionada);
+  if(alunos.find(a => a.toLowerCase() === nome.toLowerCase())){
+    toast("⚠️ Aluno já cadastrado!"); return;
+  }
+
+  // Salva no localStorage
   alunos.push(nome);
-  salvarAlunosTurma(turmaSelecionada,alunos);
-  input.value=""; renderListaModal(); toast(`✅ ${nome} adicionado!`); input.focus();
+  salvarAlunosTurma(turmaSelecionada, alunos);
+  input.value = "";
+  renderListaModal();
+  toast(`✅ ${nome} adicionado!`);
+  input.focus();
+
+  // Sincroniza com o banco
+  fetch(`gerenciar_alunos.php?acao=adicionar&turma=${turmaSelecionada}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nome })
+  })
+  .then(r => r.json())
+  .then(d => { if(d.erro) console.warn("Banco:", d.erro); })
+  .catch(() => console.warn("Servidor offline — aluno salvo só localmente"));
 }
 
 function removerAluno(idx) {
-  const alunos=getAlunos(turmaSelecionada);
-  if(!confirm(`Remover "${alunos[idx]}" da turma ${turmaSelecionada}?`)) return;
-  const nome=alunos.splice(idx,1)[0];
-  salvarAlunosTurma(turmaSelecionada,alunos);
+  const alunos  = getAlunos(turmaSelecionada);
+  const nome    = alunos[idx];
+  if(!confirm(`Remover "${nome}" da turma ${turmaSelecionada}?`)) return;
+
+  // Remove do localStorage
+  alunos.splice(idx, 1);
+  salvarAlunosTurma(turmaSelecionada, alunos);
   localStorage.removeItem(chaveChamada(turmaSelecionada));
-  renderListaModal(); toast(`🗑️ ${nome} removido.`);
+  renderListaModal();
+  toast(`🗑️ ${nome} removido.`);
+
+  // Busca o id no banco e remove
+  fetch(`gerenciar_alunos.php?acao=listar&turma=${turmaSelecionada}`)
+    .then(r => r.json())
+    .then(d => {
+      const alunoBanco = (d.alunos || []).find(a => a.nome === nome);
+      if(!alunoBanco) return;
+      return fetch(`gerenciar_alunos.php?acao=remover&turma=${turmaSelecionada}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: alunoBanco.id })
+      });
+    })
+    .catch(() => console.warn("Servidor offline — remoção salva só localmente"));
 }
 
 // ===== HISTÓRICO: CALENDÁRIO =====
